@@ -15,9 +15,7 @@ HDSP_200X::HDSP_200X(char* columns, char data, char clock) {
   }
   this->data = data;
   this->clock = clock;
-}
-
-void HDSP_200X:init() {
+  
   // Pull everything low at start to prevent floating pins and latch the shift registers 
   for (int i = 0; i < 5; i++) {
     pinMode(this->column[i], OUTPUT);

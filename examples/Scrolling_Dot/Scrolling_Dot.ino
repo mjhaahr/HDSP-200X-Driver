@@ -1,5 +1,6 @@
-/***** HDSP-200x Drive Example***** 
+/***** HDSP-200x Driver Example***** 
 Scrolling Dot Test
+ - Draws a dot the runs along each row of each character then repeats
 
 Written By Matthew Haahr
 

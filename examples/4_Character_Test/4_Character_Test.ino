@@ -1,5 +1,7 @@
-/***** HDSP-200x Drive Example***** 
+/***** HDSP-200x Driver Example***** 
 4 Character Test
+ - Draws 4 characters to the display
+ - Goes through each character definied in the font matrix
 
 Written By Matthew Haahr
 

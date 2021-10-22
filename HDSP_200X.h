@@ -24,18 +24,18 @@ class HDSP_200X {
      * @param clock The clock pin
      */
     HDSP_200X(char *columns, char data, char clock);
-
-    /**
-     * Writes a 28 bit stream to the displays shift registers
-     * @param the data to shift out
-     */
-    void writeData(unsigned long out);
     
     /**
      * Clears the number of displays provided (default is one), rewrites all data to zero
-     * @param num The number of 4 character displays to clear
+     * @param num = 1 The number of 4 character displays to clear, default is one display
      */
     void clear(char num = 1);
+    
+    /**
+     * Scrolls a dot down each pixel in the number of displays used
+     * @param num =1 The number of 4 character display the dot should travel along, default is one display
+     */
+    void testDisplay(char num = 1);
     
     /**
     * Writes four characters to the display
@@ -61,6 +61,12 @@ class HDSP_200X {
     char data;  /// The data pin
     char clock;  /// The clock pin
     unsigned char *currentString;  /// The current string being displayed
+
+    /**
+     * Writes a 28 bit stream to the displays shift registers
+     * @param the data to shift out
+     */
+    void writeData(unsigned long out);
 
 };
 

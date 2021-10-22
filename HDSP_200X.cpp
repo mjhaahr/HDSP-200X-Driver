@@ -27,6 +27,30 @@ HDSP_200X::HDSP_200X(char* columns, char data, char clock) {
   digitalWrite(this->clock, LOW);
 }
 
+void HDSP_200X::testDisplay(char num) {
+  // First one needs to be handled seperately
+  digitalWrite(clock, HIGH); // Latch clock
+  digitalWrite(data, HIGH); // shift out a 1 (start it off with a one
+  delayMicroseconds(2); // wait to latch
+  digitalWrite(clock, LOW); // end clock pulse
+  delayMicroseconds(2);
+  
+  for (int i = 0; i < (7 * 4 * num); i++) { // loops until clear
+    for (int k = 0; k < 5; k++) { // k is column number
+      // directly addressing columns for void character control
+      digitalWrite(column[k], HIGH); 
+      delayMicroseconds(1500); 
+      digitalWrite(column[k], LOW); 
+      delayMicroseconds(1000); 
+    }
+    digitalWrite(clock, HIGH); // Latch clock
+    digitalWrite(data, LOW); // shift out a 0
+    delayMicroseconds(2); // wait to latch
+    digitalWrite(clock, LOW); // end clock pulse
+    delayMicroseconds(2);
+  }
+}
+    
 
 void HDSP_200X::writeData(unsigned long out) {
   out = out & 0x0FFFFFFF;  // mask to only 28 bits, shift register size

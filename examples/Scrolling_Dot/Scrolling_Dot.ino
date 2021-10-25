@@ -23,26 +23,6 @@ void setup() {
 }
 
 void loop() {
-  scrollingDot();
+  display.testDisplay();
   delay(5);
-}
-
-void scrollingDot(void) {
-  // draw one pixel as it goes
-  byte pixel = 0;
-  for (int i = 0; i < 4; i++) {  // i is char number
-    for (int j = 0; j < 7; j++) {  // j is row number 
-      unsigned long out = 0x08000000; // 1 at top of used bit stack
-      out = out >> pixel;
-      pixel++;
-      display.writeData(out);
-      for (int k = 0; k < 5; k++) { // k is column number
-        // directly addressing columns for void character control
-        digitalWrite(column[k], HIGH); 
-        delayMicroseconds(2500); 
-        digitalWrite(column[k], LOW); 
-        delayMicroseconds(20000); 
-      }
-    }
-  }
 }

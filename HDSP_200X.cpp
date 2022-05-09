@@ -19,7 +19,7 @@ static HDSP_200X *thisDisplay; //singeton object for the ISR to access becuase i
 
 
 HDSP_200X::HDSP_200X(char* columns, char data, char clock, unsigned char num) {
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < NUM_COLS; i++) {
     this->column[i] = columns[i];
   }
   this->data = data;
@@ -27,7 +27,7 @@ HDSP_200X::HDSP_200X(char* columns, char data, char clock, unsigned char num) {
   this->num = num;
   
   // Pull everything low at start to prevent floating pins and latch the shift registers 
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < NUM_COLS; i++) {
     pinMode(this->column[i], OUTPUT);
     digitalWrite(this->column[i], LOW);
   }
@@ -52,7 +52,7 @@ void HDSP_200X::testDisplay(char num) {
   delayMicroseconds(1);
   
   for (int i = 0; i < (7 * 4 * num); i++) { // loops until clear
-    for (int k = 0; k < 5; k++) { // k is column number
+    for (int k = 0; k < NUM_COLS; k++) { // k is column number
       // directly addressing columns for void character control
       digitalWrite(column[k], HIGH); 
       delayMicroseconds(1000); 
@@ -71,10 +71,10 @@ void HDSP_200X::testDisplay(char num) {
 void HDSP_200X::writeData(unsigned long out) {
   out = out & 0x0FFFFFFF;  // mask to only 28 bits, shift register size
   for (char pos = 0; pos < 28; pos++) { // bitbang data
-    digitalWrite(this->clock, HIGH); // Start clock
-    digitalWrite(this->data, (out >> pos) & 1); // write specific pixel
+    digitalWrite(clock, HIGH); // Start clock
+    digitalWrite(data, (out >> pos) & 1); // write specific pixel
     delayMicroseconds(1); // wait to latch
-    digitalWrite(this->clock, LOW); // end clock pulse
+    digitalWrite(clock, LOW); // end clock pulse
     delayMicroseconds(1);
   }
 }
@@ -86,9 +86,9 @@ void HDSP_200X::updateString(char *newString) {
 
 void HDSP_200X::updateString(char *newString, unsigned int len) {
   noInterrupts();
-  free(this->currentString);
+  free(currentString);
   this->len = len;
-  this->currentString = malloc(len + 1);
+  currentString = malloc(len + 1);
   for (int i = 0; i < len + 1; i++) {
     currentString[i] = NULL;  //refill
   }
@@ -100,7 +100,7 @@ void HDSP_200X::updateString(char *newString, unsigned int len) {
 
 void HDSP_200X::clear(void) {
   for (int i = 0; i < this->num; i++) {
-    this->writeData(0); // send all zeros (blank spaces)
+    writeData(0); // send all zeros (blank spaces)
   }
 }
 
@@ -113,7 +113,7 @@ void HDSP_200X::draw(void) {
 }
 
 unsigned char *HDSP_200X::getCurrentString() {
-  return this->currentString;
+  return currentString;
 }
 
 static void HDSP_200X::ISRHandle(void) {
@@ -121,21 +121,27 @@ static void HDSP_200X::ISRHandle(void) {
 }
 
 void HDSP_200X::displayUpdate(void) {
-  unsigned char chars[(4 * num) + 1][5] = {0}; // assumed 10 max for number of displays, for allocation perposes
-  for (int i = 0; i < 4 * this->len; i++) { // shift down to match actual matrix map
+  unsigned char chars[(4 * num) + 1][5] = {0};
+  for (int i = 0; i < 4 * len; i++) { // shift down (by ' ') to match actual matrix map from chars (ignore control chars)
     for (int j = 0; j < 5; j++) {
-      chars[i][j] = pgm_read_byte_near((unsigned char *)&char_data[(this->currentString[i] - 0x20)][j]); // read from map
+      chars[i][j] = pgm_read_byte_near((unsigned char *)&char_data[(currentString[i] - ' ')][j]); 
+      // read from map, subtract ' ' to get to visible characters
+      // read from program memory
     }
   }
 
   for (int i = 0; i < 5; i++) {
     for (int j = (num - 1); j >= 0; j--) { // write last 4 first, then write the displays used
       // see above for shifting information
-      unsigned long out = (((unsigned long) chars[(4 * j) + 0][i]) << 21) + (((unsigned long) chars[(4 * j) + 1][i]) << 14) + (((unsigned long) chars[(4 * j) + 2][i]) << 7) + ((unsigned long) chars[(4 * j) + 3][i]);
-      this->writeData(out);
+      unsigned long out =
+        (((unsigned long) chars[(4 * j) + 0][i]) << (3 * NUM_ROWS)) +
+        (((unsigned long) chars[(4 * j) + 1][i]) << (2 * NUM_ROWS)) +
+        (((unsigned long) chars[(4 * j) + 2][i]) << NUM_ROWS) +
+        ((unsigned long) chars[(4 * j) + 3][i]);
+      writeData(out);
     }
-    digitalWrite(this->column[i], HIGH); 
+    digitalWrite(column[i], HIGH); 
     delayMicroseconds(1200); 
-    digitalWrite(this->column[i], LOW);
+    digitalWrite(column[i], LOW);
   }
 }

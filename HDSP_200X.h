@@ -13,6 +13,9 @@ Utilizes pgmspace.h and matrix.h for font mapping
 #ifndef HDSP_200X_H
 #define HDSP_200X_H
 
+#define NUM_COLS 5
+#define NUM_ROWS 7
+
 /**
 * HDSP Display Class, contains all methods and data
 */

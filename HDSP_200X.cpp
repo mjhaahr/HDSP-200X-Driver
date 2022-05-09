@@ -88,9 +88,9 @@ void HDSP_200X::updateString(char *newString, unsigned int len) {
   noInterrupts();
   free(currentString);
   this->len = len;
-  currentString = malloc(len + 1);
+  currentString = (unsigned char *) malloc(len + 1);
   for (int i = 0; i < len + 1; i++) {
-    currentString[i] = NULL;  //refill
+    currentString[i] = 0;  //refill
   }
   for (int i = 0; i < len; i++) {
     currentString[i] = newString[i];  //copy
@@ -116,12 +116,12 @@ unsigned char *HDSP_200X::getCurrentString() {
   return currentString;
 }
 
-static void HDSP_200X::ISRHandle(void) {
+void HDSP_200X::ISRHandle(void) {
   thisDisplay->displayUpdate();
 }
 
 void HDSP_200X::displayUpdate(void) {
-  unsigned char chars[(4 * num) + 1][5] = {0};
+  unsigned char chars[(4 * MAX_DISPLAYS) + 1][5] = {0};  // allocate to max number of characters
   for (int i = 0; i < 4 * len; i++) { // shift down (by ' ') to match actual matrix map from chars (ignore control chars)
     for (int j = 0; j < 5; j++) {
       chars[i][j] = pgm_read_byte_near((unsigned char *)&char_data[(currentString[i] - ' ')][j]); 

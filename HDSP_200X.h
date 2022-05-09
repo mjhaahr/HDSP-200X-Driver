@@ -16,6 +16,8 @@ Utilizes pgmspace.h and matrix.h for font mapping
 #define NUM_COLS 5
 #define NUM_ROWS 7
 
+#define MAX_DISPLAYS 8
+
 /**
 * HDSP Display Class, contains all methods and data
 */

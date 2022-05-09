@@ -10,8 +10,8 @@ Utilizes pgmspace.h and matrix.h for font mapping
 #include <string.h>
 #include "matrix.h"
 
-//#ifndef HDSP_200X
-//#define HDSP_200X
+#ifndef HDSP_200X_H
+#define HDSP_200X_H
 
 /**
 * HDSP Display Class, contains all methods and data
@@ -94,4 +94,4 @@ class HDSP_200X {
 
 };
 
-//#endif
+#endif

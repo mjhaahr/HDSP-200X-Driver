@@ -17,7 +17,7 @@ char clock = 11;
 static const unsigned long timespacing = 250;
 static unsigned long last = 0;
 
-HDSP_200X display = HDSP_200X(column, data, clock);
+HDSP_200X display = HDSP_200X(column, data, clock, 1);
 
 void setup() {
 }

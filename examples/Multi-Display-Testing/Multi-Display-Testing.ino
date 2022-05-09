@@ -17,25 +17,35 @@ char clock = 11;
 static const unsigned long timespacing = 1500;
 static unsigned long last = 0;
 
-HDSP_200X display = HDSP_200X(column, data, clock);
+HDSP_200X display = HDSP_200X(column, data, clock, 4);
 
 void setup() {
 }
 
 void loop() {
+  display.updateString("This is a test");
+  display.draw();
+  
   last = millis();
   while (millis() < last + timespacing) {
-    display.writeNChars(4, "This is a Test  ");
     delay(3);
   }
+
+  display.pause();
+  display.updateString("Thanks for using");
+  display.draw();
+  
   last = millis();
   while (millis() < last + timespacing) {
-    display.writeNChars(4, "Thanks for Using");
     delay(3);
   }
+
+  display.pause();
+  display.updateString("Have Fun!");
+  display.draw();
+  
   last = millis();
   while (millis() < last + timespacing) {
-    display.writeNChars(4, "Have Fun!       ");
     delay(3);
   }
 }

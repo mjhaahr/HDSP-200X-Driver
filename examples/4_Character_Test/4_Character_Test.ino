@@ -11,14 +11,14 @@ Utilizes HDSP-200X Display driver class
 #include <HDSP_200X.h>
 #include <matrix.h>
 
-char column[] = {10,9,8,7,6};
-char data = 12;
-char clock = 11;
+char column[] = {1, 2, 3, 4, 5};
+char data = 6;
+char clock = 7;
 
 static const unsigned long timespacing = 250;
 static unsigned long last = 0;
 
-HDSP_200X display = HDSP_200X(column, data, clock);
+HDSP_200X display = HDSP_200X(column, data, clock, 1);
 
 void setup() {
 }
@@ -27,7 +27,9 @@ void loop() {
   for (volatile int i = 32; i < 127; i++) {
     last = millis();
     while (millis() < last + timespacing) {
+      display.pause();
       charTesting(i);
+      display.draw();
       delay(5);
     }
   }
@@ -45,5 +47,5 @@ void charTesting(unsigned char letter) {
     chars[i] = temp;
   }
   
-  display.writeFourChars(chars);
+  display.updateString(chars);
 }

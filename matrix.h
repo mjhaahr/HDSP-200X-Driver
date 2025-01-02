@@ -30,7 +30,7 @@ ASCII CHAR ASCII CHAR ASCII CHAR ASCII CHAR ASCII CHAR ASCII CHAR
 #ifndef MATRIX_h
 #define MATRIX_h
 
-static const unsigned char char_data[95][5] PROGMEM = {
+static const uint8_t char_data[95][5] PROGMEM = {
     // Special Characters Part 1 (ASCII 0x20-0x2F)
     {0x00, 0x00, 0x00, 0x00, 0x00}, // space
     {0x00, 0x00, 0x7D, 0x00, 0x00}, // !

@@ -74,30 +74,32 @@ class HDSP_200X {
          */
         char *getCurrentString(void);
 
-        /**
-         * The actual ISR handler, non-static method
-         */
-        void displayUpdate(void);
-
     private:
-        char column[5];      // The column pins
-        char data;           // The data pin
-        char clock;          // The clock pin
-        unsigned char num;   // The number of display units
+        uint8_t column[5];      // The column pins
+        uint8_t data;           // The data pin
+        uint8_t clock;          // The clock pin
+        uint8_t num;   // The number of display units
         char *currentString; // The current string being displayed
-        unsigned char len;   // The length of currentString
-        static char chars[(4 * MAX_DISPLAYS) + 1][5];
+        uint8_t len;   // The length of currentString
+
+        // Compressed Column Data
+        static uint32_t columnBuffer[NUM_COLS][MAX_DISPLAYS];
 
         /**
-         * Writes a 28 bit stream to the displays shift registers
+         * Writes a 28 bit stream for a single display module's shift registers
          * @param the data to shift out
          */
-        void writeData(unsigned long out);
+        void writeColumn(uint32_t colData);
 
         /**
          * Timer ISR for display updaing
          */
         static void ISRHandle(void);
+
+        /**
+         * Flushes the current display buffer to the displays shift
+         */
+        void writeBuffer(void);
 };
 
 #endif

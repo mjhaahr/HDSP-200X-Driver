@@ -8,14 +8,10 @@ Utilizes pgmspace.h and matrix.h for font mapping
 
 #include "HDSP_200X.h"
 
-#define USE_TIMER_1     true
-#define USE_TIMER_2     false
-#define USE_TIMER_3     false
-#define USE_TIMER_4     false
-#define USE_TIMER_5     false
-#include <TimerInterrupt.h>
+//static HDSP_200X *thisDisplay; //singeton object for the ISR to access becuase it is static
 
-static HDSP_200X *thisDisplay; //singeton object for the ISR to access becuase it is static
+
+char HDSP_200X::chars[(4 * MAX_DISPLAYS) + 1][5] = {0};
 
 
 HDSP_200X::HDSP_200X(char* columns, char data, char clock, unsigned char num) {
@@ -36,46 +32,42 @@ HDSP_200X::HDSP_200X(char* columns, char data, char clock, unsigned char num) {
   digitalWrite(this->data, LOW);
   digitalWrite(this->clock, LOW);
   
-  ITimer1.init();
-  ITimer1.attachInterrupt(60, ISRHandle);
-  ITimer1.pauseTimer();
-  thisDisplay = this;
+  //thisDisplay = this;
 }
 
 // TODO: test without latch time
 void HDSP_200X::testDisplay(char num) {
+  for (int i = 0; i < (7 * 4 * num); i++) {
+    digitalWrite(clock, HIGH); // Latch clock
+    digitalWrite(data, LOW); // shift out a 0 clear display
+    digitalWrite(clock, LOW); // end clock pulse
+  }
+  
   // First one needs to be handled seperately
   digitalWrite(clock, HIGH); // Latch clock
-  digitalWrite(data, HIGH); // shift out a 1 (start it off with a one
-  delayMicroseconds(1); // wait to latch
+  digitalWrite(data, HIGH); // shift out a 1 (start it off with a one)
   digitalWrite(clock, LOW); // end clock pulse
-  delayMicroseconds(1);
   
   for (int i = 0; i < (7 * 4 * num); i++) { // loops until clear
     for (int k = 0; k < NUM_COLS; k++) { // k is column number
       // directly addressing columns for void character control
       digitalWrite(column[k], HIGH); 
-      delayMicroseconds(1000); 
+      delayMicroseconds(2000); 
       digitalWrite(column[k], LOW); 
-      delayMicroseconds(750); 
+      delayMicroseconds(1000); 
     }
     digitalWrite(clock, HIGH); // Latch clock
     digitalWrite(data, LOW); // shift out a 0
-    delayMicroseconds(1); // wait to latch
     digitalWrite(clock, LOW); // end clock pulse
-    delayMicroseconds(1);
   }
 }
     
-// TODO: test without latch time
 void HDSP_200X::writeData(unsigned long out) {
   out = out & 0x0FFFFFFF;  // mask to only 28 bits, shift register size
   for (char pos = 0; pos < 28; pos++) { // bitbang data
     digitalWrite(clock, HIGH); // Start clock
     digitalWrite(data, (out >> pos) & 1); // write specific pixel
-    delayMicroseconds(1); // wait to latch
     digitalWrite(clock, LOW); // end clock pulse
-    delayMicroseconds(1);
   }
 }
 
@@ -85,17 +77,15 @@ void HDSP_200X::updateString(char *newString) {
 }
 
 void HDSP_200X::updateString(char *newString, unsigned int len) {
-  noInterrupts();
   free(currentString);
   this->len = len;
-  currentString = (unsigned char *) malloc(len + 1);
-  for (int i = 0; i < len + 1; i++) {
+  currentString = (char *) malloc(len + 1);
+  for (unsigned int i = 0; i < len + 1; i++) {
     currentString[i] = 0;  //refill
   }
-  for (int i = 0; i < len; i++) {
+  for (unsigned int i = 0; i < len; i++) {
     currentString[i] = newString[i];  //copy
   }
-  interrupts();
 }
 
 void HDSP_200X::clear(void) {
@@ -105,35 +95,33 @@ void HDSP_200X::clear(void) {
 }
 
 void HDSP_200X::pause(void) {
-  ITimer1.pauseTimer();
+  //ITimer1.pauseTimer();
 }
 
 void HDSP_200X::draw(void) {
-  ITimer1.resumeTimer();
+  //ITimer1.resumeTimer();
 }
 
-unsigned char *HDSP_200X::getCurrentString() {
+char *HDSP_200X::getCurrentString() {
   return currentString;
 }
 
 void HDSP_200X::ISRHandle(void) {
-  thisDisplay->displayUpdate();
+  //thisDisplay->displayUpdate();
 }
 
 void HDSP_200X::displayUpdate(void) {
-  unsigned char chars[(4 * MAX_DISPLAYS) + 1][5] = {0};  // allocate to max number of characters
-  for (int i = 0; i < 4 * len; i++) { // shift down (by ' ') to match actual matrix map from chars (ignore control chars)
+  for (int i = 0; i < 4 * len; i++) { // shift down (by ' ', 0x20) to match actual matrix map from chars (ignore control chars)
     for (int j = 0; j < 5; j++) {
-      chars[i][j] = pgm_read_byte_near((unsigned char *)&char_data[(currentString[i] - ' ')][j]); 
+      chars[i][j] = pgm_read_byte_near((char *)&char_data[(currentString[i] - ' ')][j]); 
       // read from map, subtract ' ' to get to visible characters
       // read from program memory
     }
   }
-
   for (int i = 0; i < 5; i++) {
     for (int j = (num - 1); j >= 0; j--) { // write last 4 first, then write the displays used
       // see above for shifting information
-      unsigned long out =
+      unsigned long out = 
         (((unsigned long) chars[(4 * j) + 0][i]) << (3 * NUM_ROWS)) +
         (((unsigned long) chars[(4 * j) + 1][i]) << (2 * NUM_ROWS)) +
         (((unsigned long) chars[(4 * j) + 2][i]) << NUM_ROWS) +
@@ -141,7 +129,7 @@ void HDSP_200X::displayUpdate(void) {
       writeData(out);
     }
     digitalWrite(column[i], HIGH); 
-    delayMicroseconds(1200); 
+    delay(2); 
     digitalWrite(column[i], LOW);
   }
 }

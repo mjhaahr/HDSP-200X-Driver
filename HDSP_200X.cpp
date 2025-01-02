@@ -5,6 +5,16 @@ Written By Matthew Haahr
 Utilizes pgmspace.h and matrix.h for font mapping
 */
 
+// TODO: DOCUMENTATION (and keywords)
+// TODO: setup timer interrupt
+// TODO: figure out actual timing requirements (rate and so on)
+// TODO: ISR logic:
+//      Turn off active column
+//      Write new column into buffer
+//      Turn on new column
+// Maybe TODO: Add brightness control (PWM the column data? or just disable after a time)
+//      Two timer cycles, one starts the display, the other turns off the column after a bit
+
 
 #include "HDSP_200X.h"
 

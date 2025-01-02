@@ -8,7 +8,6 @@ Utilizes pgmspace.h and matrix.h for font mapping
 #include "matrix.h"
 #include <Arduino.h>
 #include <avr/pgmspace.h>
-#include <string.h>
 
 #ifndef HDSP_200X_H
 #define HDSP_200X_H

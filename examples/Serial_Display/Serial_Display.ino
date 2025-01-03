@@ -15,9 +15,9 @@ Utilizes HDSP-200X Display driver class
 #define NUM     1
 #define LEN     NUM * 4
 
-uint8_t column[] = {0, 1, 2, 3, 4};
-uint8_t data = 5;
-uint8_t clock = 6;
+uint8_t column[] = {2, 3, 4, 5, 6};
+uint8_t data = 7;
+uint8_t clock = 8;
 
 HDSP_200X display = HDSP_200X(column, data, clock, NUM);
 

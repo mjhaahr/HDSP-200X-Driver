@@ -33,10 +33,8 @@ class HDSP_200X {
 
         /**
          * Scrolls a dot down each pixel in the number of displays used
-         * @param num =1 The number of 4 character display the dot should travel
-         * along, default is one display
          */
-        void testDisplay(uint8_t num = 1);
+        void testDisplay(void);
 
         /**
          * Updates the string stored in the memory (frees and reallocates)

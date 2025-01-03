@@ -10,9 +10,9 @@ Utilizes HDSP-200X Display driver class
 #include <HDSP_200X.h>
 #include <matrix.h>
 
-uint8_t column[] = {0, 1, 2, 3, 4};
-uint8_t data = 5;
-uint8_t clock = 6;
+uint8_t column[] = {2, 3, 4, 5, 6};
+uint8_t data = 7;
+uint8_t clock = 8;
 
 static const uint32_t timespacing = 1500;
 static uint32_t last = 0;

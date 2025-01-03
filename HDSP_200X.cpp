@@ -22,15 +22,8 @@ Utilizes pgmspace.h and matrix.h for font mapping
 //static HDSP_200X *thisDisplay; //singeton object for the ISR to access becuase it is static
 
 HDSP_200X::HDSP_200X(uint8_t* columns, uint8_t data, uint8_t clock, uint8_t num) {
-    // Setup Column Control Lines and pull low to prevent floating pins
-    for (uint8_t col = 0; col < NUM_COLS; col++) {
-        this->column[col] = columns[col];
 
-        pinMode(this->column[col], OUTPUT);
-        digitalWrite(this->column[col], LOW);
-    }
-
-    // Setup the clock and data lines
+    // Setup the clock and data lines and pull low to prevent floating pins
     this->clock = clock;
     pinMode(this->clock, OUTPUT);
     digitalWrite(this->clock, LOW);
@@ -38,6 +31,14 @@ HDSP_200X::HDSP_200X(uint8_t* columns, uint8_t data, uint8_t clock, uint8_t num)
     this->data = data;
     pinMode(this->data, OUTPUT);
     digitalWrite(this->data, LOW);
+
+    // Setup Column Control Lines and pull low to prevent floating pins
+    for (uint8_t col = 0; col < NUM_COLS; col++) {
+        this->column[col] = columns[col];
+
+        pinMode(this->column[col], OUTPUT);
+        digitalWrite(this->column[col], LOW);
+    }
 
     this->num = num;
 
@@ -48,7 +49,7 @@ HDSP_200X::HDSP_200X(uint8_t* columns, uint8_t data, uint8_t clock, uint8_t num)
 }
 
 // TODO: test without latch time
-void HDSP_200X::testDisplay(uint8_t num) {
+void HDSP_200X::testDisplay(void) {
     // Clear the display
     clear();
 
@@ -62,13 +63,14 @@ void HDSP_200X::testDisplay(uint8_t num) {
         for (int col = 0; col < NUM_COLS; col++) {
             // directly addressing columns for void character control
             digitalWrite(column[col], HIGH);
-            delayMicroseconds(2000);
+            delay(3);
             digitalWrite(column[col], LOW);
-            delayMicroseconds(1000);
+            delay(2);
         }
         digitalWrite(clock, HIGH); // Latch clock
         digitalWrite(data, LOW); // shift out a 0
         digitalWrite(clock, LOW); // end clock pulse
+        delay(10);
     }
 }
 

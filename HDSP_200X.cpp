@@ -12,10 +12,10 @@ Utilizes pgmspace.h and matrix.h for font mapping
 //      Turn off active column
 //      Write new column into buffer
 //      Turn on new column
-// Maybe TODO: Add brightness control (PWM the column data? or just disable after a time)
-//      Two timer cycles, one starts the display, the other turns off the column after a bit
+// Maybe TODO: Add brightness control (add a Brightness line, which gets PWM'ed (that's what VB is for))
 
 // If changing the string and actively displaying, pause and unpause behind the scenes
+// TODO: debate between only allowing one and allow multiple "Instances"
 
 #include "HDSP_200X.h"
 
@@ -95,6 +95,8 @@ void HDSP_200X::updateString(char *newString, uint8_t len) {
 
     // Raw Column Data to copy into
     uint8_t columnData[NUM_COLS][4 * MAX_DISPLAYS];
+
+    // TODO: only copy in legit characters (within range), and update length if too short
 
     // Copy string and fill column data storage
     for (uint8_t i = 0; i < len; i++) {

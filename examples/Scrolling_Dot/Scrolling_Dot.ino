@@ -10,9 +10,9 @@ Utilizes HDSP-200X Display driver class
 #include <HDSP_200X.h>
 #include <matrix.h>
 
-uint8_t column[] = {10,9,8,7,6};
-uint8_t data = 12;
-uint8_t clock = 11;
+uint8_t column[] = {0, 1, 2, 3, 4};
+uint8_t data = 5;
+uint8_t clock = 6;
 
 HDSP_200X display = HDSP_200X(column, data, clock, 1);
 

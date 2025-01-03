@@ -15,13 +15,14 @@ uint8_t column[] = {2, 3, 4, 5, 6};
 uint8_t data = 7;
 uint8_t clock = 8;
 
-static const uint32_t timespacing = 250;
+static const uint32_t timespacing = 1000;
 static uint32_t last = 0;
 
 HDSP_200X display = HDSP_200X(column, data, clock, 1);
 
 void setup() {
     Serial.begin(9600);
+    display.draw();
 }
 
 void loop() {
@@ -29,8 +30,6 @@ void loop() {
         last = millis();
         charTesting(i);
         while (millis() < last + timespacing) {
-            display.clear();
-            display.writeBuffer();
             delay(5);
         }
     }
@@ -49,5 +48,5 @@ void charTesting(unsigned char letter) {
     }
 
     Serial.println(chars);
-    display.updateString(chars);
+    display.updateString(chars, 4);
 }

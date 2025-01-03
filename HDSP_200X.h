@@ -72,6 +72,16 @@ class HDSP_200X {
         void draw(void);
 
         /**
+         * The Timer ISR
+         */
+        static void ISRHandle(void);
+
+        /**
+         * Draws a Single entry of the column Buffer
+         */
+        void drawSingleBuffer(void);
+
+        /**
          * Flushes the current display buffer to the displays shift
          */
         void writeBuffer(void);
@@ -84,19 +94,16 @@ class HDSP_200X {
         char *currentString; // The current string being displayed
         uint8_t len;   // The length of currentString
 
+        volatile uint8_t activeCol;
+
         // Compressed Column Data
-        uint32_t columnBuffer[NUM_COLS][MAX_DISPLAYS];
+        volatile uint32_t columnBuffer[NUM_COLS][MAX_DISPLAYS];
 
         /**
          * Writes a 28 bit stream for a single display module's shift registers
          * @param the data to shift out
          */
         void writeColumn(uint32_t colData);
-
-        /**
-         * Timer ISR for display updaing
-         */
-        static void ISRHandle(void);
 };
 
 #endif  /* HDSP_200X_H */

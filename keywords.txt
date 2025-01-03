@@ -7,3 +7,24 @@
 #######################################
 # Class
 HDSP_200X	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+writeColumn	KEYWORD2
+writeBuffer	KEYWORD2
+clear	KEYWORD2
+
+testDisplay	KEYWORD2
+
+updateString	KEYWORD2
+getCurrentString	KEYWORD2
+
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+# Macros
+NUM_COLS	LITERAL1
+NUM_ROWS	LITERAL1
+MAX_DISPLAYS	LITERAL1

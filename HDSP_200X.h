@@ -29,7 +29,14 @@ class HDSP_200X {
          * @param clock The clock pin
          * @param num The number of 4 character display units
          */
-        HDSP_200X(char *columns, char data, char clock, unsigned char num);
+        HDSP_200X(uint8_t *columns, uint8_t data, uint8_t clock, uint8_t num);
+
+        /**
+         * Scrolls a dot down each pixel in the number of displays used
+         * @param num =1 The number of 4 character display the dot should travel
+         * along, default is one display
+         */
+        void testDisplay(uint8_t num = 1);
 
         /**
          * Updates the string stored in the memory (frees and reallocates)
@@ -43,7 +50,13 @@ class HDSP_200X {
          * @param newString newString pointer
          * @param len The length of the string
          */
-        void updateString(char *newString, unsigned int len);
+        void updateString(char *newString,uint8_t len);
+
+        /**
+         * Gets the current text
+         * @return The current text displayed on the display as a char*
+         */
+        char *getCurrentString(void);
 
         /**
          * Clears the displays, rewrites all data to zero
@@ -61,17 +74,9 @@ class HDSP_200X {
         void draw(void);
 
         /**
-         * Scrolls a dot down each pixel in the number of displays used
-         * @param num =1 The number of 4 character display the dot should travel
-         * along, default is one display
+         * Flushes the current display buffer to the displays shift
          */
-        void testDisplay(char num = 1);
-
-        /**
-         * Gets the current text
-         * @return The current text displayed on the display as a char*
-         */
-        char *getCurrentString(void);
+        void writeBuffer(void);
 
     private:
         uint8_t column[5];      // The column pins
@@ -82,7 +87,7 @@ class HDSP_200X {
         uint8_t len;   // The length of currentString
 
         // Compressed Column Data
-        static uint32_t columnBuffer[NUM_COLS][MAX_DISPLAYS];
+        uint32_t columnBuffer[NUM_COLS][MAX_DISPLAYS];
 
         /**
          * Writes a 28 bit stream for a single display module's shift registers
@@ -94,11 +99,6 @@ class HDSP_200X {
          * Timer ISR for display updaing
          */
         static void ISRHandle(void);
-
-        /**
-         * Flushes the current display buffer to the displays shift
-         */
-        void writeBuffer(void);
 };
 
-#endif
+#endif  /* HDSP_200X_H */

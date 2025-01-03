@@ -15,14 +15,15 @@ Utilizes pgmspace.h and matrix.h for font mapping
 // Maybe TODO: Add brightness control (PWM the column data? or just disable after a time)
 //      Two timer cycles, one starts the display, the other turns off the column after a bit
 
+// If changing the string and actively displaying, pause and unpause behind the scenes
 
 #include "HDSP_200X.h"
 
 //static HDSP_200X *thisDisplay; //singeton object for the ISR to access becuase it is static
 
-HDSP_200X::HDSP_200X(char* columns, char data, char clock, unsigned char num) {
+HDSP_200X::HDSP_200X(uint8_t* columns, uint8_t data, uint8_t clock, uint8_t num) {
     // Setup Column Control Lines and pull low to prevent floating pins
-    for (int col = 0; col < NUM_COLS; col++) {
+    for (uint8_t col = 0; col < NUM_COLS; col++) {
         this->column[col] = columns[col];
 
         pinMode(this->column[col], OUTPUT);
@@ -47,7 +48,7 @@ HDSP_200X::HDSP_200X(char* columns, char data, char clock, unsigned char num) {
 }
 
 // TODO: test without latch time
-void HDSP_200X::testDisplay(char num) {
+void HDSP_200X::testDisplay(uint8_t num) {
     // Clear the display
     clear();
 
@@ -85,7 +86,7 @@ void HDSP_200X::updateString(char *newString) {
     this->updateString(newString, len);
 }
 
-void HDSP_200X::updateString(char *newString, unsigned int len) {
+void HDSP_200X::updateString(char *newString, uint8_t len) {
     free(currentString);
     this->len = len;
     currentString = (char *) malloc(len + 1);
@@ -149,7 +150,7 @@ char *HDSP_200X::getCurrentString() {
 }
 
 void HDSP_200X::ISRHandle(void) {
-    //thisDisplay->displayUpdate();
+    //thisDisplay->writeBuffer();
 }
 
 void HDSP_200X::writeBuffer(void) {
